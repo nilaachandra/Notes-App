@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 const NoteAdder = () => {
   const [getTitles, setGetTitles] = useState("");
@@ -10,15 +10,26 @@ const NoteAdder = () => {
     },
   ]);
 
-  let newTitle = getTitles;
-  let newNote = getNotes;
+  //load notes from local storage on component mount
+  useEffect(() => {
+    const storedNotes = JSON.parse(localStorage.getItem("localNotes"));
+    storedNotes ? setMyNotes(storedNotes) : myNotes;
+  }, []);
+
+  //save notes to local storage whenever myNotes changes
+  useEffect(() => {
+    localStorage.setItem("localNotes", JSON.stringify(myNotes));
+  }, [myNotes]);
 
   const addNotes = () => {
-    let notesToAdd = {
-      title: newTitle,
-      note: newNote,
+    // Create a new note object using the state variables directly
+    const notesToAdd = {
+      title: getTitles,
+      note: getNotes,
     };
-    setMyNotes([...myNotes, notesToAdd]); //this updates the state by appending the new note to the existing array
+    // Update the state by appending the new note to the existing array
+    setMyNotes([...myNotes, notesToAdd]);
+    // Clear the input fields and state variables
     setGetTitles("");
     setGetNotes("");
   };
@@ -30,17 +41,21 @@ const NoteAdder = () => {
   const handleChangeNote = (e) => {
     setGetNotes(e.target.value);
   };
+
   return (
     <div className="form flex flex-col w-full">
       <input
         onChange={handleChangeTitle}
         type="text"
-        name=""
-        id=""
+        value={getTitles} 
         placeholder="Add a Title"
-        className="border border-black "
+        className="border border-black"
       />
-      <textarea onChange={handleChangeNote} placeholder="Add notes"></textarea>
+      <textarea
+        onChange={handleChangeNote}
+        value={getNotes} 
+        placeholder="Add notes"
+      ></textarea>
       <button
         type="submit"
         onClick={addNotes}
