@@ -3,20 +3,17 @@ import React, { useEffect, useState } from "react";
 const NoteAdder = () => {
   const [getTitles, setGetTitles] = useState("");
   const [getNotes, setGetNotes] = useState("");
-  const [myNotes, setMyNotes] = useState([
-    {
-      title: "Test Title",
-      note: "this is my test note",
-    },
-  ]);
+  const [myNotes, setMyNotes] = useState([]);
 
-  //load notes from local storage on component mount
+  // Load notes from local storage on component mount
   useEffect(() => {
     const storedNotes = JSON.parse(localStorage.getItem("localNotes"));
-    storedNotes ? setMyNotes(storedNotes) : myNotes;
+    if (storedNotes) {
+      setMyNotes(storedNotes);
+    };
   }, []);
 
-  //save notes to local storage whenever myNotes changes
+  // Save notes to local storage whenever myNotes changes
   useEffect(() => {
     localStorage.setItem("localNotes", JSON.stringify(myNotes));
   }, [myNotes]);
@@ -27,6 +24,7 @@ const NoteAdder = () => {
       title: getTitles,
       note: getNotes,
     };
+    console.log(notesToAdd)
     // Update the state by appending the new note to the existing array
     setMyNotes([...myNotes, notesToAdd]);
     // Clear the input fields and state variables
@@ -55,6 +53,7 @@ const NoteAdder = () => {
         onChange={handleChangeNote}
         value={getNotes} 
         placeholder="Add notes"
+        className="border border-black"
       ></textarea>
       <button
         type="submit"
